@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECO HAVOC: GREEN REBORN</title>
+
+  <!-- ── Stylesheet ───────────────────────── -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     SPLASH / INTRO SCREEN
+═══════════════════════════════════════════ -->
+<div id="splash">
+  <div class="grid-bg"></div>
+  <div id="splash-bg"></div>
+  <div id="splash-title">ECO HAVOC<br>GREEN REBORN</div>
+  <div id="splash-sub">3D OPEN WORLD EDITION</div>
+  <div id="splash-tagline">"Selamatkan Kota. Pilah Sampah. Rebut Masa Depan."</div>
+
+  <div id="splash-features">
+    <div class="feature-pill">🌍 Open World 3D</div>
+    <div class="feature-pill">♻️ Waste Sorting</div>
+    <div class="feature-pill">🏙️ City Builder</div>
+    <div class="feature-pill">🧠 Edukasi IPS</div>
+    <div class="feature-pill">⚡ Neo Cyberpunk</div>
+    <div class="feature-pill">🎯 6 Chapters</div>
+  </div>
+
+  <button id="start-btn" onclick="startGame()">▶ MULAI GAME</button>
+</div>
+
+<!-- ── 3D Canvas ──────────────────────────── -->
+<canvas id="canvas"></canvas>
+
+<!-- ── Crosshair ─────────────────────────── -->
+<div id="crosshair"></div>
+
+<!-- ══════════════════════════════════════════
+     HUD (hidden until game starts)
+═══════════════════════════════════════════ -->
+<div id="hud" style="display:none">
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <div id="game-title">ECO HAVOC</div>
+
+    <div class="stat-group">
+      <div class="stat-item">
+        <span class="stat-label">KREDIT</span>
+        <span class="stat-value" id="stat-credits">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">LEVEL</span>
+        <span class="stat-value" id="stat-level">1</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">SAMPAH</span>
+        <span class="stat-value" id="stat-waste">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">SKOR</span>
+        <span class="stat-value" id="stat-score">0</span>
+      </div>
+    </div>
+
+    <div id="chapter-info-top"
+         style="font-family:'Orbitron',monospace;font-size:11px;color:#00ff64;letter-spacing:2px;">
+      CH.1 — THE OVERFLOW
+    </div>
+  </div>
+
+  <!-- POLLUTION BAR -->
+  <div id="pollution-bar-wrap">
+    <span id="eco-label">ECO</span>
+    <div id="pollution-track">
+      <div id="pollution-fill" style="width:70%"></div>
+    </div>
+    <span id="pollution-label">POLUSI</span>
+    <span id="poll-pct"
+          style="font-family:'Orbitron',monospace;font-size:11px;color:#fff;margin-left:4px;">70%</span>
+  </div>
+
+  <!-- LEFT SIDE MENU BUTTONS -->
+  <div id="left-panel">
+    <button class="panel-btn" onclick="showPanel('sorting')">
+      <span class="btn-icon">♻️</span>PILAH
+    </button>
+    <button class="panel-btn" onclick="showPanel('city')">
+      <span class="btn-icon">🏙️</span>KOTA
+    </button>
+    <button class="panel-btn" onclick="showPanel('skills')">
+      <span class="btn-icon">🧠</span>SKILL
+    </button>
+    <button class="panel-btn" onclick="showPanel('ecofacts')">
+      <span class="btn-icon">📚</span>ECO DB
+    </button>
+    <button class="panel-btn" onclick="showPanel('economy')">
+      <span class="btn-icon">💼</span>EKONOMI
+    </button>
+  </div>
+
+  <!-- RIGHT DISTRICT INFO PANEL -->
+  <div id="right-panel">
+    <div id="district-name">DOWNTOWN<br>MEGAPOLIS</div>
+    <div class="district-stat"><span>Polusi</span>    <span id="dp-polusi">70%</span></div>
+    <div class="district-stat"><span>Penduduk</span>  <span id="dp-pop">12.4K</span></div>
+    <div class="district-stat"><span>Sampah</span>    <span id="dp-trash">847 ton</span></div>
+    <div class="district-stat">
+      <span>Status</span>
+      <span id="dp-status" style="color:#ff8800">⚠ KRITIS</span>
+    </div>
+    <div style="margin-top:12px;font-size:10px;color:#555;letter-spacing:1px;">SAMPAH DI AREA</div>
+    <div id="nearby-waste" style="margin-top:6px;font-size:11px;color:#aaa;line-height:1.8;"></div>
+  </div>
+
+  <!-- MINIMAP -->
+  <div id="minimap">
+    <canvas id="minimap-canvas" width="150" height="150"></canvas>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div id="bottombar">
+    <div id="controls-hint">WASD GERAK · MOUSE LIHAT · E KUMPUL · R PILAH · ESC MENU</div>
+    <div id="xp-bar-wrap">
+      <span>XP</span>
+      <div id="xp-bar"><div id="xp-fill"></div></div>
+      <span id="xp-val">0/100</span>
+    </div>
+    <div id="chapter-info">CHAPTER 1 — THE OVERFLOW</div>
+  </div>
+
+  <!-- ECONOMY TICKER -->
+  <div id="economy-ticker">
+    <span id="tick-plastic">🧴 Plastik: 120cr/ton</span>
+    <span id="tick-organic">🌿 Organik: 80cr/ton</span>
+    <span id="tick-metal">⚙️ Logam: 250cr/ton</span>
+    <span id="tick-ewaste">💻 E-Waste: 400cr/ton</span>
+  </div>
+
+</div><!-- /hud -->
+
+<!-- ── Notification Toast ────────────────── -->
+<div id="notif"></div>
+
+<!-- ── Red Damage Flash ──────────────────── -->
+<div id="damage-overlay"></div>
+
+
+<!-- ══════════════════════════════════════════
+     OVERLAY PANELS
+═══════════════════════════════════════════ -->
+
+<!-- SORTING MINI-GAME -->
+<div class="overlay" id="panel-sorting">
+  <div class="overlay-panel">
+    <button class="close-btn" onclick="hidePanel('sorting')">✕</button>
+    <div class="overlay-title">♻ SORTING STATION</div>
+
+    <div id="sorting-game" class="active">
+      <div style="text-align:center;margin-bottom:8px;font-size:13px;color:#aaa;">
+        Klik sampah lalu pilih tempat sampah yang benar!
+      </div>
+
+      <div id="sort-score">SKOR: 0</div>
+      <div id="waste-items"></div>
+
+      <div id="bin-area">
+        <div class="bin bin-organic" onclick="dropToBin('organik')">🟢<span class="bin-name">ORGANIK</span></div>
+        <div class="bin bin-plastic" onclick="dropToBin('plastik')">🔵<span class="bin-name">PLASTIK</span></div>
+        <div class="bin bin-metal"   onclick="dropToBin('logam')">  ⚪<span class="bin-name">LOGAM</span></div>
+        <div class="bin bin-ewaste"  onclick="dropToBin('ewaste')"> 🟣<span class="bin-name">E-WASTE</span></div>
+        <div class="bin bin-b3"      onclick="dropToBin('b3')">     🔴<span class="bin-name">B3</span></div>
+      </div>
+
+      <div id="sort-feedback"></div>
+      <div id="sort-fact" class="eco-fact" style="display:none;max-width:400px;"></div>
+
+      <button onclick="newWasteItem()"
+              style="font-family:'Orbitron',monospace;font-size:11px;color:#00ff64;
+                     background:none;border:1px solid rgba(0,255,100,.3);
+                     padding:8px 20px;border-radius:6px;cursor:pointer;
+                     letter-spacing:2px;margin-top:8px;">
+        SAMPAH BERIKUTNYA ▶
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CITY / DISTRICT MAP -->
+<div class="overlay" id="panel-city">
+  <div class="overlay-panel">
+    <button class="close-btn" onclick="hidePanel('city')">✕</button>
+    <div class="overlay-title">🏙 PETA KOTA</div>
+    <div id="district-grid"></div>
+    <div style="margin-top:16px;font-size:12px;color:#666;text-align:center;">
+      Bersihkan distrik untuk membuka area baru dan meningkatkan rating kota
+    </div>
+  </div>
+</div>
+
+<!-- SKILL TREE -->
+<div class="overlay" id="panel-skills">
+  <div class="overlay-panel">
+    <button class="close-btn" onclick="hidePanel('skills')">✕</button>
+    <div class="overlay-title">🧠 SKILL TREE</div>
+    <div style="text-align:center;font-size:12px;color:#aaa;margin-bottom:16px;">
+      Skill Points tersedia:
+      <span id="skill-pts"
+            style="color:#00ff64;font-family:'Orbitron',monospace;font-size:14px;">0</span>
+    </div>
+    <div id="skill-tree"></div>
+  </div>
+</div>
+
+<!-- ECO DATABASE -->
+<div class="overlay" id="panel-ecofacts">
+  <div class="overlay-panel">
+    <button class="close-btn" onclick="hidePanel('ecofacts')">✕</button>
+    <div class="overlay-title">📚 ECO DATABASE</div>
+    <div id="ecofacts-content"></div>
+  </div>
+</div>
+
+<!-- ECONOMY -->
+<div class="overlay" id="panel-economy">
+  <div class="overlay-panel">
+    <button class="close-btn" onclick="hidePanel('economy')">✕</button>
+    <div class="overlay-title">💼 SISTEM EKONOMI</div>
+    <div id="economy-content"></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SCRIPTS — load order matters!
+     1. three.min.js  (3D engine, CDN)
+     2. data.js       (GS + all constants)
+     3. ui.js         (HUD / panels — needs data)
+     4. sorting.js    (mini-game  — needs data + ui)
+     5. world.js      (3D world   — needs data + ui)
+     6. main.js       (entry point — needs everything)
+═══════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/sorting.js"></script>
+<script src="js/world.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
